@@ -73,7 +73,7 @@ class Maze:
 
     def generate_walls(self, screen_width, screen_height):
         walls = []
-        for _ in range(20):
+        for _ in range(40):
             x = random.randint(0, screen_width // self.cell_size - 1) * self.cell_size
             y = random.randint(0, screen_height // self.cell_size - 1) * self.cell_size
             walls.append((x, y))
@@ -83,10 +83,22 @@ class Maze:
         for wall in self.walls:
             pygame.draw.rect(screen, wall_color, (wall[0], wall[1], self.cell_size, self.cell_size))
 
+
 def generate_food(snake_positions, walls, screen_width, screen_height, cell_size):
+    # Load and scale the apple image
+    apple_image = pygame.image.load("Assets/Food.png")
+    apple_image = pygame.transform.scale(apple_image, (30, 30))  # Scale to fit the grid
+
     while True:
+        # Generate a random food position aligned to the grid
         x = random.randint(0, screen_width // cell_size - 1) * cell_size
         y = random.randint(0, screen_height // cell_size - 1) * cell_size
-        food = (x, y)
-        if food not in snake_positions and food not in walls:
-            return food
+        food_position = (x, y)
+
+        # Ensure the position does not overlap with the snake or walls
+        if food_position not in snake_positions and food_position not in walls:
+            return food_position, apple_image
+
+def draw_food(screen, food_position, apple_image):
+    # Draw the food image at the exact grid position
+    screen.blit(apple_image, food_position)
