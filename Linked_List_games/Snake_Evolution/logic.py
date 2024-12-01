@@ -60,8 +60,10 @@ class Snake:
             if self.head.position == current.position:
                 print("Collision detected! Trimming the snake.")
                 current.next = None
-                return
+                
+                return True
             current = current.next
+        return False
 
     def has_single_segment(self): 
         return self.head and self.head.next is None
@@ -73,26 +75,34 @@ class Maze:
 
     def generate_walls(self, screen_width, screen_height):
         walls = []
-        for _ in range(40):
+        for _ in range(50):
             x = random.randint(0, screen_width // self.cell_size - 1) * self.cell_size
             y = random.randint(0, screen_height // self.cell_size - 1) * self.cell_size
+            if (1200 <= x < 1200 + 200 and 50 <= y < 50 + 50):
+                continue
             walls.append((x, y))
         return walls
 
-    def draw(self, screen, wall_color):
+    def draw(self, screen):
+        apple_image = pygame.image.load("Assets/Rock2.png")
+        apple_image = pygame.transform.scale(apple_image, (20, 20))
         for wall in self.walls:
-            pygame.draw.rect(screen, wall_color, (wall[0], wall[1], self.cell_size, self.cell_size))
+            screen.blit(apple_image, (wall[0], wall[1]))
 
 
 def generate_food(snake_positions, walls, screen_width, screen_height, cell_size):
     # Load and scale the apple image
     apple_image = pygame.image.load("Assets/Food.png")
-    apple_image = pygame.transform.scale(apple_image, (30, 30))  # Scale to fit the grid
+    apple_image = pygame.transform.scale(apple_image, (20, 20))  # Scale to fit the grid
 
     while True:
         # Generate a random food position aligned to the grid
         x = random.randint(0, screen_width // cell_size - 1) * cell_size
         y = random.randint(0, screen_height // cell_size - 1) * cell_size
+
+        # Check if the generated coordinates are outside the restricted rectangle
+        if (1200 <= x < 1200 + 200 and 50 <= y < 50 + 50):
+            continue
         food_position = (x, y)
 
         # Ensure the position does not overlap with the snake or walls
