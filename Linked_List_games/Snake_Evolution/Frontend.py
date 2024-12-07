@@ -18,14 +18,10 @@ RED = (255, 0, 0)
 BLACK = (0, 0, 0)
 apple_image=None
 pygame.init()
-font = pygame.font.Font("Assets/SourGummy-VariableFont_wdth,wght.ttf", 30)
+font = pygame.font.Font("Linked_List_games/Snake_Evolution/Assets/SourGummy-VariableFont_wdth,wght.ttf", 30)
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Serpentine Symphony")
-clock = pygame.time.Clock()
-pygame.display.set_caption('Solitaire Game')
-# pygame.mixer.music.load("Pictures/Sound.mp3")
-# pygame.mixer.music.set_volume(1.0)
-# pygame.mixer.music.play(-1)
+clock = pygame.time.Clock() 
 
 initial_snake_positions = [(100, 100), (100, 80), (100, 60), (100, 40)]
 snake = Snake(initial_snake_positions)
@@ -36,13 +32,13 @@ def UpdateScore(val):
     global score
     score += val
 def DisplayScore():
-    font1 = pygame.font.Font("Assets/static/EduAUVICWANTPre-Bold.ttf", 30)
+    font1 = pygame.font.Font("Linked_List_games/Snake_Evolution/Assets/static/EduAUVICWANTPre-Bold.ttf", 30)
     scoreText = f"Score: {score}"
     textSurface = font1.render(scoreText, True, (255, 255, 255))
     screen.blit(textSurface, (30, 170))
 def GamePlay():
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    background_image = pygame.image.load('Assets/2.png')
+    background_image = pygame.image.load('Linked_List_games/Snake_Evolution/Assets/2.png')
     background_image=pygame.transform.scale(background_image, (1400, 700))
     global food_position, apple_image
     running = True

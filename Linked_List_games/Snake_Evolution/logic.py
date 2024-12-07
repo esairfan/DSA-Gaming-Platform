@@ -86,7 +86,7 @@ class Maze:
 
 def generate_food(snake_positions, walls, screen_width, screen_height, cell_size):
     # Load and scale the apple image
-    apple_image = pygame.image.load("Assets/Food.png")
+    apple_image = pygame.image.load("Linked_List_games/Snake_Evolution/Assets/Food.png")
     apple_image = pygame.transform.scale(apple_image, (30, 30))  # Scale to fit the grid
 
     while True:
