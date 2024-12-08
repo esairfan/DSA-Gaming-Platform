@@ -84,7 +84,7 @@ class Maze:
         return walls
 
     def draw(self, screen):
-        apple_image = pygame.image.load("Assets/Rock2.png")
+        apple_image = pygame.image.load("Linked_List_games/Snake_Evolution/Assets/Rock2.png")
         apple_image = pygame.transform.scale(apple_image, (20, 20))
         for wall in self.walls:
             screen.blit(apple_image, (wall[0], wall[1]))
@@ -93,7 +93,7 @@ class Maze:
 def generate_food(snake_positions, walls, screen_width, screen_height, cell_size):
     # Load and scale the apple image
     apple_image = pygame.image.load("Linked_List_games/Snake_Evolution/Assets/Food.png")
-    apple_image = pygame.transform.scale(apple_image, (30, 30))  # Scale to fit the grid
+    apple_image = pygame.transform.scale(apple_image, (20, 20))  # Scale to fit the grid
 
     while True:
         # Generate a random food position aligned to the grid

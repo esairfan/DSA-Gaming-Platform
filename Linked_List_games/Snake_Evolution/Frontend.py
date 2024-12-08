@@ -39,28 +39,28 @@ def UpdateScore(val):
     global score
     score += val
 def DisplayScore():
-    apple_image = pygame.image.load("Assets/Food.png")
+    apple_image = pygame.image.load("Linked_List_games/Snake_Evolution/Assets/Food.png")
     apple_image = pygame.transform.scale(apple_image, (50, 50))
-    font1 = pygame.font.Font("Assets/static/EduAUVICWANTPre-Bold.ttf", 30)
+    font1 = pygame.font.Font("Linked_List_games/Snake_Evolution/Assets/static/EduAUVICWANTPre-Bold.ttf", 30)
     screen.blit(apple_image, (1250, 50))
     scoreText = f"={score}"
     textSurface = font1.render(scoreText, True, (255, 0, 0))
     screen.blit(textSurface, (1300, 53))
 def play_background_music():
     pygame.mixer.init()  
-    pygame.mixer.music.load("Assets/Bg.mp3")
+    pygame.mixer.music.load("Linked_List_games/Snake_Evolution/Assets/Bg.mp3")
     pygame.mixer.music.set_volume(1.0)  
     pygame.mixer.music.play(-1)  
 def play_background_music_for_Food():
-    food_sound = pygame.mixer.Sound("Assets/Food.ogg")  # Load the food sound
+    food_sound = pygame.mixer.Sound("Linked_List_games/Snake_Evolution/Assets/Food.ogg")  # Load the food sound
     food_sound.set_volume(1.0)  # Set volume
     food_sound.play()  
 def play_background_music_for_Collision():
-    food_sound = pygame.mixer.Sound("Assets/Pathar.mp3")  # Load the food sound
+    food_sound = pygame.mixer.Sound("Linked_List_games/Snake_Evolution/Assets/Pathar.mp3")  # Load the food sound
     food_sound.set_volume(1.0)  # Set volume
     food_sound.play() 
 def play_background_music_for_Bite_Snake():
-    food_sound = pygame.mixer.Sound("Assets/Bite.mp3")  # Load the food sound
+    food_sound = pygame.mixer.Sound("Linked_List_games/Snake_Evolution/Assets/Bite.mp3")  # Load the food sound
     food_sound.set_volume(1.0)  # Set volume
     food_sound.play() 
 def GamePlay():
