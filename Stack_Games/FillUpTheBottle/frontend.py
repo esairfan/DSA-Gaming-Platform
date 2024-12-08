@@ -37,9 +37,6 @@ class FillUpTheBottleFrontend:
             pygame.draw.line(screen, (0, 0, 0), (x_offset, bottle_top), (x_offset, y_base), 2)
             pygame.draw.line(screen, (0, 0, 0), (x_offset + BOTTLE_WIDTH, bottle_top), (x_offset + BOTTLE_WIDTH, y_base), 2)
 
-            if selected_bottle == i:
-                pygame.draw.rect(screen, (0, 255, 0), bottle_rect, 3)
-
             pygame.draw.arc(
                 screen,
                 (0, 0, 0),
@@ -76,14 +73,21 @@ class FillUpTheBottleFrontend:
             if ball_y_pos > SCREEN_HEIGHT - 300:  # Animate upward from the ball's current y position
                 self.ball_pos = (self.ball_pos[0], self.ball_pos[1], ball_y_pos - 5)
 
+    def reset_selected_bottle(self):
+        """Reset the selected bottle and make the ball visible again."""
+        self.ball_pos = None
+        self.selected_bottle = None
+
     def move_ball_to_target(self, source, target):
         if self.game.is_valid_move(source, target):
             ball = self.game.get_bottles()[source].pop()
             self.game.get_bottles()[target].append(ball)
-            self.ball_pos = None
-            self.selected_bottle = None
+            self.reset_selected_bottle()
             return True
-        return False
+        else:
+            # Invalid move, reset the selected bottle
+            self.reset_selected_bottle()
+            return False
 
 
 def main():
@@ -110,8 +114,9 @@ def main():
                         else:
                             target_bottle = i
                             if frontend.move_ball_to_target(frontend.selected_bottle, target_bottle):
-                                frontend.ball_pos = None
-                                frontend.selected_bottle = None
+                                pass
+                            else:
+                                frontend.reset_selected_bottle()
                             break
                     x_offset += BOTTLE_WIDTH + 30
 
