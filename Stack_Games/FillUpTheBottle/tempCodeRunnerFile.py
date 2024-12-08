@@ -18,25 +18,24 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Fill Up The Bottle Animation")
 clock = pygame.time.Clock()
 
-
 class FillUpTheBottleFrontend:
     def __init__(self, game):
         self.game = game
-        self.ball_pos = None  # Stores (bottle_index, ball_color, ball_y_pos)
         self.selected_bottle = None
+        self.ball_pos = None  # This will store (bottle_index, ball_color, ball_y_pos)
 
     def draw_bottles(self, screen, selected_bottle=None):
         screen.fill((255, 255, 255))
         x_offset = 50
         y_base = SCREEN_HEIGHT - 50
-
+        
         for i, bottle in enumerate(self.game.get_bottles()):
             bottle_top = y_base - BOTTLE_HEIGHT
             bottle_rect = pygame.Rect(x_offset, bottle_top, BOTTLE_WIDTH, BOTTLE_HEIGHT)
-
+ 
             pygame.draw.line(screen, (0, 0, 0), (x_offset, bottle_top), (x_offset, y_base), 2)
             pygame.draw.line(screen, (0, 0, 0), (x_offset + BOTTLE_WIDTH, bottle_top), (x_offset + BOTTLE_WIDTH, y_base), 2)
-
+ 
             if selected_bottle == i:
                 pygame.draw.rect(screen, (0, 255, 0), bottle_rect, 3)
 
@@ -51,10 +50,7 @@ class FillUpTheBottleFrontend:
 
             # Draw balls inside the bottle
             y_ball = y_base - BALL_RADIUS - 10
-            for ball_idx, ball in enumerate(bottle):
-                if self.ball_pos and i == self.ball_pos[0] and ball_idx == len(bottle) - 1:
-                    # Skip drawing the ball currently in motion
-                    continue
+            for ball in bottle:
                 color = COLORS[ball - 1]  # Get the color for the ball
                 pygame.draw.circle(
                     screen, color, (x_offset + BOTTLE_WIDTH // 2, y_ball + 30), BALL_RADIUS
@@ -84,8 +80,7 @@ class FillUpTheBottleFrontend:
             self.selected_bottle = None
             return True
         return False
-
-
+    
 def main():
     game = FillUpTheBottle(5)
     frontend = FillUpTheBottleFrontend(game)
@@ -105,7 +100,7 @@ def main():
                             if bottle:
                                 frontend.selected_bottle = i
                                 ball_color = bottle[-1]
-                                ball_y_pos = SCREEN_HEIGHT - 80 - (2 * BALL_RADIUS + 5) * (len(bottle) - 1)
+                                ball_y_pos = SCREEN_HEIGHT - 80 - (2 * BALL_RADIUS + 5) * (len(bottle) - 1)  # Set position based on ball index
                                 frontend.ball_pos = (frontend.selected_bottle, ball_color, ball_y_pos)
                         else:
                             target_bottle = i
@@ -117,7 +112,7 @@ def main():
 
         frontend.animate_ball_upward()
         frontend.draw_bottles(screen, frontend.selected_bottle)
-
+ 
         if game.is_game_complete():
             print("You Win! Total Moves:", game.moves)
             running = False
@@ -125,7 +120,6 @@ def main():
         clock.tick(30)
 
     pygame.quit()
-
 
 if __name__ == "__main__":
     main()
