@@ -8,6 +8,7 @@ class TicTacToe:
 
     def reset_game(self):
         """Reset the game state."""
+        
         self.grid = [["" for _ in range(self.grid_size)] for _ in range(self.grid_size)]
         self.current_player = "X"
         self.winner = None

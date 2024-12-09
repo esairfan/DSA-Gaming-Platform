@@ -39,6 +39,7 @@ draw_image = pygame.transform.scale(draw_image, (1050, 700))
 font = pygame.font.SysFont("arial", FONT_SIZE, bold=True)
 myfont = pygame.font.SysFont("arial", 50, bold=True)
 
+
 # Load sounds
 pygame.mixer.init()
 click_sound = pygame.mixer.Sound("Array_Games/Tic_Tac_Toe/Assets/BG.mp3")  # Click sound effect
