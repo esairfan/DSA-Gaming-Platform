@@ -41,7 +41,7 @@ def UpdateScore(val):
 def DisplayScore():
     apple_image = pygame.image.load("Linked_List_games/Snake_Evolution/Assets/Food.png")
     apple_image = pygame.transform.scale(apple_image, (50, 50))
-    font1 = pygame.font.Font("Linked_List_games/Snake_Evolution/Assets/static/EduAUVICWANTPre-Bold.ttf", 30)
+    font1 = pygame.font.Font("Linked_List_games/Snake_Evolution/Assets/EduAUVICWANTPre-Bold.ttf", 30)
     screen.blit(apple_image, (1250, 50))
     scoreText = f"={score}"
     textSurface = font1.render(scoreText, True, (255, 0, 0))
@@ -184,7 +184,7 @@ def wait_for_keypress(screen):
                 waiting = False
 def PauseGame():
     # Load the background image for pause screen
-    background_image = pygame.image.load('Assets/Pause.png')
+    background_image = pygame.image.load('Linked_List_games/Snake_Evolution/Assets/Pause.png')
     background_image = pygame.transform.scale(background_image, (1400, 700))  # Adjust size if needed
     
     # Create the screen (if not already created)
