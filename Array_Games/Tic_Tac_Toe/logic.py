@@ -11,7 +11,11 @@ class TicTacToe:
         self.grid = [["" for _ in range(self.grid_size)] for _ in range(self.grid_size)]
         self.current_player = "X"
         self.winner = None
-        self.game_over = False
+        self.game_over = False 
+        # Restart the background music
+    # Other reset logic
+        global sound_played
+        sound_played = False
 
     def make_move(self, row, col):
         """Place a mark at the given position if valid."""
