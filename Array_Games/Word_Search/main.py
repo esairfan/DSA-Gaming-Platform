@@ -4,16 +4,17 @@ from frontend import WordSearchUI
 
 def main():
     pygame.init()
-    grid_size = 10
-    word_list = ["PYTHON", "GAME", "SEARCH", "WORD", "ALGORITHM"]
-    
-    logic = WordSearchLogic(grid_size, word_list)
+
+    grid_size = 12
+    word_count = 10  # Total words to display
+
+    logic = WordSearchLogic(grid_size, word_count)
     logic.place_words()
     logic.fill_random_letters()
 
-    screen = pygame.display.set_mode((grid_size * 40 + 200, grid_size * 40))
+    screen = pygame.display.set_mode((1200, 800))  # Adjusted screen size
     pygame.display.set_caption("Word Search")
-    ui = WordSearchUI(screen, logic.get_grid(), word_list)
+    ui = WordSearchUI(screen, logic.get_grid(), logic.get_word_list())
 
     running = True
     selecting = False
@@ -46,13 +47,14 @@ def main():
                     selected_word = "".join(selected_sequence)
                     if logic.is_valid_word(selected_sequence):
                         print(f"Word Found: {selected_word}")
-                        ui.mark_found_word(selected_word, selected_cells)  # Highlight and remove
+                        ui.mark_found_word(selected_word, selected_cells)
                     else:
                         print(f"Invalid Word: {selected_word}")
-                    ui.selected_cells = []
+                    ui.selected_cells = []  # Reset selected cells after selection
 
-        ui.draw_grid()
-        ui.draw_word_list()
+        ui.draw_title()
+        grid_bottom = ui.draw_grid()
+        ui.draw_word_list(grid_bottom)
         pygame.display.flip()
 
     pygame.quit()
