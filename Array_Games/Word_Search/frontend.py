@@ -6,7 +6,7 @@ class WordSearchUI:
         self.grid = grid
         self.word_list = word_list
         self.cell_size = 35  # Cell size for the grid
-        self.letter_gap = 5  # Gap between letters in the grid
+        self.letter_gap = 0  # Gap between letters in the grid
         self.font = pygame.font.SysFont("Arial", 22)  # Font size for letters
         self.title_font = pygame.font.SysFont("Arial", 40, bold=True)
         self.word_font = pygame.font.SysFont("Arial", 20)
