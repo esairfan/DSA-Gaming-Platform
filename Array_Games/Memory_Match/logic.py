@@ -1,47 +1,61 @@
 import random
+import pygame
 
-# Constants
-GRID_ROWS = 6
-GRID_COLS = 5
-ITEMS = [
-    "apple", "bird", "brinjal", "candle", "candy",
-    "cherry", "cookie", "grape", "heart", "lolly",
-    "mushroom", "pepper", "santa", "snake", "snow"
-]
+# Define card dimensions
+CARD_WIDTH = 45
+CARD_HEIGHT = 80
+MARGIN = 50
+GRID_SIZE = 6  # 6x6 grid
 
-def create_grid(rows, cols):
-    """Create a grid with shuffled pairs of items."""
-    items = ITEMS.copy()  # Use the global ITEMS list
-    if rows * cols % 2 != 0:
-        raise ValueError("Grid must have an even number of cells for pairs.")
-    
-    required_pairs = rows * cols // 2  # Calculate the required number of pairs
+colors = {
+    'text': (255, 255, 255),  # White text for symbols
+}
+card_back_image = pygame.image.load("Array_Games/Memory_Match/Assets/cardbackground.png")  # Replace "card_back.png" with your actual image path
+card_back_image = pygame.transform.scale(card_back_image, (CARD_WIDTH, CARD_HEIGHT))
 
-    # Check if there are enough unique items
-    if len(items) < required_pairs:
-        raise ValueError("Not enough unique items to fill the grid.")
-    
-    # Duplicate and shuffle items
-    pairs = items[:required_pairs] * 2  # Limit to required unique items and create pairs
-    random.shuffle(pairs)
+# Define the Card class
+class Card:
+    def __init__(self, symbol, x, y):
+        self.symbol = symbol
+        self.x = x
+        self.y = y
+        self.is_flipped = False
+        self.is_matched = False
 
-    # Create the grid
-    grid = [[pairs.pop() for _ in range(cols)] for _ in range(rows)]
-    return grid
+    def draw(self, screen, font, colors):
+        if not self.is_flipped:
+            screen.blit(card_back_image, (self.x, self.y))
+        else:
+            pygame.draw.rect(screen, colors['flipped'], (self.x, self.y, CARD_WIDTH, CARD_HEIGHT))
+            text = font.render(self.symbol, True, colors['text'])
+            screen.blit(text, (self.x + CARD_WIDTH // 4, self.y + CARD_HEIGHT // 4))
+            
+        pygame.draw.rect(screen, (0, 0, 0), (self.x-2, self.y-2, CARD_WIDTH+6, CARD_HEIGHT+6), 6, border_radius=10)
+        
+    def is_clicked(self, mouse_x, mouse_y):
+        return self.x <= mouse_x <= self.x + CARD_WIDTH and self.y <= mouse_y <= self.y + CARD_HEIGHT
 
-def is_match(grid, first, second):
-    """Check if two positions in the grid match."""
-    if not all(0 <= idx[0] < len(grid) and 0 <= idx[1] < len(grid[0]) for idx in [first, second]):
-        raise IndexError("One or both indices are out of grid bounds.")
-    return grid[first[0]][first[1]] == grid[second[0]][second[1]]
 
-def all_matched(matched):
-    """
-    Check if all cards are matched.
+# Function to generate a shuffled set of symbols
+def generate_card_symbols():
+    symbols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H','I','J','K','L', 'M','N','O','P','Q','R']
+    symbols = symbols * 2  # Duplicate each symbol to create pairs
+    random.shuffle(symbols)
+    return symbols
 
-    Parameters:
-        matched (list[list[bool]]): A 2D list representing the matched state of the grid.
-    Returns:
-        bool: True if all cards are matched, False otherwise.
-    """
-    return all(all(row) for row in matched)
+
+# Function to create the grid of cards
+def create_grid():
+    symbols = generate_card_symbols()
+    cards = []
+    for i in range(GRID_SIZE):
+        for j in range(GRID_SIZE):
+            x = j * (CARD_WIDTH + MARGIN)
+            y = i * (CARD_HEIGHT + MARGIN)
+            card = Card(symbols.pop(), x, y)
+            cards.append(card)
+    return cards
+
+# Function to check if two cards match
+def check_match(card1, card2):
+    return card1.symbol == card2.symbol
