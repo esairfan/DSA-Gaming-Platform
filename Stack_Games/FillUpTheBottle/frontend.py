@@ -25,9 +25,9 @@ win_image = pygame.transform.scale(win_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
 # Load sounds
 pygame.mixer.init()
-invalid_move_sound = pygame.mixer.Sound("Stack_Games/FillUpTheBottle/Assets/Invalid.mp3")
+invalid_move_sound = pygame.mixer.Sound("Stack_Games/FillUpTheBottle/Assets/BallMoveSound (mp3cut.net).mp3")
 bottle_click_sound = pygame.mixer.Sound("Stack_Games/FillUpTheBottle/Assets/BottleClickSound (mp3cut.net).mp3")
-ball_move_sound = pygame.mixer.Sound("Stack_Games/FillUpTheBottle/Assets/BallMoveSound (mp3cut.net).mp3")
+ball_move_sound = pygame.mixer.Sound("Stack_Games/FillUpTheBottle/Assets/Invalid.mp3")
 
 
 pygame.display.set_caption("Hydro Hustle")
