@@ -4,26 +4,41 @@ from logic import TowerOfHanoi
 
 pygame.init()
 
-SCREEN_WIDTH, SCREEN_HEIGHT = 800, 600
+SCREEN_WIDTH, SCREEN_HEIGHT = 1400, 700
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("Tower of Hanoi")
-
+pygame.display.set_caption("Tower Trek")
+WHITE1 = (255, 253, 208)
 WHITE = (255, 255, 255)
 DISK_COLORS = [(205, 133, 63), (160, 82, 45), (139, 69, 19), (244, 164, 66), (112, 128, 144)]
+pygame.mixer.init()
+
+# Load sound effect for card flip
+tower_click = pygame.mixer.Sound("Stack_Games/TowerOfHanoi/Assets/tower_click.mp3")
+distination_click = pygame.mixer.Sound("Stack_Games/TowerOfHanoi/Assets/invalid.mp3")
 
 rod_image = pygame.image.load("Stack_Games/TowerOfHanoi/Assets/rod.png")
 rod_image = pygame.transform.scale(rod_image, (20, 300))
+bg_image = pygame.image.load("Stack_Games/TowerOfHanoi/Assets/ui1 (2).jpg")
+bg_image = pygame.transform.scale(bg_image, (1400, 700))
 
 DISK_HEIGHT = 20
-TOWER_X_POSITIONS = [150, 400, 650]
+TOWER_X_POSITIONS = [ 400, 700, 1000]
 
 tiles = int(os.getenv("TILE_COUNT", 4))
 game = TowerOfHanoi(tiles)
 
 def draw_rods():
+    rod_y = SCREEN_HEIGHT - 285
+    # Draw the rods
     for x in TOWER_X_POSITIONS:
-        rod_y = SCREEN_HEIGHT - 285
         screen.blit(rod_image, (x - rod_image.get_width() // 2, rod_y))
+
+    # Draw a connecting line (same color as rod)
+    line_color = (100, 50, 10) # Use the same color as the rods
+    pygame.draw.line(screen, line_color, 
+                     (TOWER_X_POSITIONS[0], rod_y+264.7),  # Starting point of the line
+                     (TOWER_X_POSITIONS[-1], rod_y+264.7),  # Ending point of the line
+                     width=14)  # Thickness of the line
 
 def draw_disks():
     for tower_idx, tower in enumerate(game.towers):
@@ -77,7 +92,7 @@ def redraw_screen(x, y, disk, source):
     """
     Redraws the screen during animation with the moving disk at (x, y).
     """
-    screen.fill(WHITE)
+    screen.blit(bg_image, (0, 0))
     draw_rods()
     draw_disks()
 
@@ -108,7 +123,7 @@ def main():
     selected_tower = None  # Keeps track of the currently selected rod (source)
 
     while running:
-        screen.fill(WHITE)
+        screen.blit(bg_image, (0, 0))
         draw_rods()
         draw_disks()
 
@@ -129,6 +144,7 @@ def main():
                 if clicked_tower is not None:
                     if selected_tower is None:
                         # First click: Set the source tower
+                        tower_click.play()  # Play the sound effect
                         selected_tower = clicked_tower
                     else:
                         # Second click: Set the target tower and make a move
@@ -139,8 +155,10 @@ def main():
                             # Perform the actual move
                             game.make_move(selected_tower, clicked_tower)
                             print(f"Moved disk from Tower {selected_tower + 1} to Tower {clicked_tower + 1}")
+                            tower_click.play()  # Play the sound effect
                         else:
                             print("Invalid move!")
+                            distination_click.play()  # Play the sound effect
                         selected_tower = None  # Reset the selection
 
         pygame.display.flip()
