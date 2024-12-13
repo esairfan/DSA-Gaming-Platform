@@ -1,4 +1,7 @@
 import pygame
+pygame.mixer.init()
+
+select = pygame.mixer.Sound("Array_Games/Word_Search/Assets/select.mp3")
 
 class WordSearchUI:
     def __init__(self, screen, grid, word_list):
@@ -7,8 +10,8 @@ class WordSearchUI:
         self.word_list = word_list
         self.cell_size = 35  # Cell size for the grid
         self.letter_gap = 0  # Gap between letters in the grid
-        self.font = pygame.font.SysFont("Arial", 22)  # Font size for letters
-        self.title_font = pygame.font.SysFont("Arial", 40, bold=True)
+        self.font = pygame.font.SysFont("Array_Games/Word_Search/Assets/Roboto-Bold.ttf", 22)  # Font size for letters
+        self.title_font = pygame.font.Font("Array_Games/Word_Search/Assets/Roboto-Bold.ttf", 40)
         self.word_font = pygame.font.SysFont("Arial", 20)
         self.selected_cells = []  # Keeps track of currently selected cells
         self.found_words = []  # List of found words
@@ -25,7 +28,7 @@ class WordSearchUI:
     def draw_title(self):
         # Draw the title at the top of the screen
         screen_width, _ = self.screen.get_size()
-        title_surface = self.title_font.render("THE WORD SEARCH BATTLE", True, (0, 0, 0))
+        title_surface = self.title_font.render("Search & Conquer", True, (255, 255, 255))
         title_rect = title_surface.get_rect(center=(screen_width // 2, 50))  # Adjusted to 50px from the top
         self.screen.blit(title_surface, title_rect)
         
@@ -61,23 +64,17 @@ class WordSearchUI:
                 x = grid_x + col_idx * (self.cell_size + self.letter_gap)
                 y = grid_y + row_idx * (self.cell_size + self.letter_gap)
 
-                # Check if the current cell is selected
+                # Highlight selected cell
                 if (row_idx, col_idx) in self.selected_cells:
-                    # Highlight the cell with a background color
-                    pygame.draw.rect(
-                        self.screen,
-                        (173, 216, 230),  # Light blue for selection highlight
-                        (x, y, self.cell_size, self.cell_size)
-                    )
-
-                # Check if the cell is part of a found word and highlight accordingly
-                for word, cells in self.word_cells.items():
-                    if (row_idx, col_idx) in cells:
-                        # Highlight the cell with the color associated with the word
-                        color = self.word_cells[word]["color"]
+                    pygame.draw.rect(self.screen,(173, 216, 230),(x, y, self.cell_size, self.cell_size))  # Light blue for selection highlight
+                    card_flip_sound = pygame.mixer.Sound("Array_Games/Word_Search/Assets/select.mp3")
+                    card_flip_sound.play()
+                # Highlight cells that are part of a found word
+                for word, data in self.word_cells.items():
+                    if (row_idx, col_idx) in data["cells"]:
                         pygame.draw.rect(
                             self.screen,
-                            color,  # Word's color for highlighted cells
+                            data["color"],  # Use the stored color for each word
                             (x, y, self.cell_size, self.cell_size)
                         )
 
@@ -90,7 +87,7 @@ class WordSearchUI:
         return grid_y + grid_height
 
     def mark_found_word(self, word, cells):
- 
+        
         color = self.colors[self.current_color_index]
         self.current_color_index = (self.current_color_index + 1) % len(self.colors)
  
@@ -101,31 +98,31 @@ class WordSearchUI:
         pygame.display.flip()
         
     def draw_word_list(self, grid_bottom):
-        # Draw the word list in a horizontal layout below the grid
+        # Draw the word list in a vertical layout below the grid
         screen_width, _ = self.screen.get_size()
-        word_list_width = len(self.word_list) * 120  # Adjust the spacing between words
-        list_x = (screen_width - word_list_width) // 2
-        list_y = grid_bottom + 20  # Position the list below the grid
+        word_list_height = len(self.word_list) * 40  # Adjust the spacing between words
+        list_x = (screen_width - 1100) // 2  # Position the list in the center horizontally
+        list_y = 125  # Position the list below the grid
 
         # Draw the border around the word list
-        list_width = word_list_width
-        list_height = 50
+        list_width = 200  # Adjust the width of the word list box
         pygame.draw.rect(
-            self.screen, (0, 0, 0), (list_x - 10, list_y - 10, list_width + 20, list_height + 20), 3, border_radius=15
+            self.screen, (0, 0, 0), (list_x - 10, list_y - 10, list_width + 20, word_list_height + 20), 3, border_radius=15
         )
         pygame.draw.rect(
-            self.screen, (255, 255, 255), (list_x - 10, list_y - 10, list_width + 20, list_height + 20), 0, border_radius=15
+            self.screen, (22, 68, 81), (list_x - 10, list_y - 10, list_width + 20, word_list_height + 20), 0, border_radius=15
         )
 
-        # Draw the words inside the border
+        # Draw the words vertically inside the border
         for idx, word in enumerate(self.word_list):
-            word_x = list_x + idx * 120  # Spacing between words
+            word_y = list_y + idx * 40  # Spacing between words vertically
 
             # Dim the color if the word is found
-            color = (169, 169, 169) if word in self.found_words else (0, 0, 0)
+            color = (169, 169, 169) if word in self.found_words else (255, 255, 255)
 
+            # Render the word with vertical positioning
             text_surface = self.word_font.render(word, True, color)
-            text_rect = text_surface.get_rect(center=(word_x + 60, list_y + 25))  # Centered in the curved box
+            text_rect = text_surface.get_rect(center=(list_x + 100, word_y + 20))  # Centered horizontally in the box
             self.screen.blit(text_surface, text_rect)
 
         pygame.display.flip()

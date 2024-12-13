@@ -2,9 +2,9 @@ import pygame
 from logic import WordSearchLogic
 from frontend import WordSearchUI
 
+
 def main():
     pygame.init()
-
     grid_size = 12
     word_count = 10  # Total words to display
 
@@ -13,7 +13,7 @@ def main():
     logic.fill_random_letters()
 
     screen = pygame.display.set_mode((1200, 800))  # Adjusted screen size
-    pygame.display.set_caption("Word Search")
+    pygame.display.set_caption("Word Seeker")
     ui = WordSearchUI(screen, logic.get_grid(), logic.get_word_list())
 
     running = True
@@ -22,8 +22,7 @@ def main():
     selected_cells = []
 
     while running:
-        screen.fill((255, 255, 255))
-
+        screen.fill((34, 103, 119))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
