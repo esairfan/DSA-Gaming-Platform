@@ -8,7 +8,13 @@ pygame.init()
 SCREEN_WIDTH, SCREEN_HEIGHT = 1200, 700
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Traversal Tree")
- 
+
+pygame.mixer.init()
+
+# Load sound effect for card flip
+button_click = pygame.mixer.Sound("Tree_Games/Travesal_Tycon/Assets/button_click.mp3")
+
+
 WHITE = (250, 240, 230)  
 BLACK = (0, 0, 0)
 SE = (217, 71, 57) 
@@ -16,8 +22,8 @@ BG = (250, 236, 204)  # Background color
 HOVER_COLOR = (255, 102, 102)  # Button hover color
 
 # Fonts
-FONT = pygame.font.Font(None, 36)
-FONT1 = pygame.font.Font(None, 50)  # Larger font for title
+FONT = pygame.font.Font("Stack_Games/TowerOfHanoi/Assets/static/EduAUVICWANTPre-Bold.ttf", 20)
+FONT1 = pygame.font.Font("Stack_Games/TowerOfHanoi/Assets/static/EduAUVICWANTPre-Bold.ttf", 50)
 FONT1.set_bold(True)
 
 # Button dimensions and setup
@@ -49,7 +55,7 @@ def draw_buttons(screen, positions, texts, hovered_idx=None):
 
 def display_loading_screen():
     """Display a loading screen."""
-    loading_text = FONT.render("Loading, please wait...", True, SE)
+    loading_text = FONT1.render("Loading, please wait...", True, SE)
     loading_rect = loading_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
     screen.fill(BG)
     screen.blit(loading_text, loading_rect)
@@ -64,14 +70,15 @@ def main():
     traversal_type = None
 
     while running:
+        
         screen.fill(BG)
-
         # Event handling
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if hovered_button is not None:
+                    button_click.play()
                     traversal_type = button_texts[hovered_button]
                     print(f"{traversal_type} selected!")
                     display_loading_screen()
