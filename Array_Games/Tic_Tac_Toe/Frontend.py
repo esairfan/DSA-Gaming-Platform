@@ -42,29 +42,23 @@ myfont = pygame.font.SysFont("arial", 50, bold=True)
 
 # Load sounds
 pygame.mixer.init()
-click_sound = pygame.mixer.Sound("Array_Games/Tic_Tac_Toe/Assets/BG.mp3")  # Click sound effect
-pygame.mixer.music.load("Array_Games/Tic_Tac_Toe/Assets/BG.mp3")  # Background music
-win_sound = pygame.mixer.Sound("Array_Games/Tic_Tac_Toe/Assets/Win.mp3")  # Win sound effect
-draw_sound = pygame.mixer.Sound("Array_Games/Tic_Tac_Toe/Assets/Draw.mp3")  # Draw sound effect
-
-# Start background music
-#pygame.mixer.music.play(-1)  # Play the background music in a loop
+click_sound = pygame.mixer.Sound("Array_Games/Tic_Tac_Toe/Assets/BG.mp3")
+pygame.mixer.music.load("Array_Games/Tic_Tac_Toe/Assets/BG.mp3")
+win_sound = pygame.mixer.Sound("Array_Games/Tic_Tac_Toe/Assets/Win.mp3")
+draw_sound = pygame.mixer.Sound("Array_Games/Tic_Tac_Toe/Assets/Draw.mp3")
 
 game = TicTacToe(grid_size=GRID_SIZE)
 
-# Function to draw the grid
 def draw_grid(): 
     for x in range(1, GRID_SIZE):
         pygame.draw.line(screen, WHITE, (275, (100 + x * 167)), (775, (100 + x * 167)), LINE_WIDTH)
         pygame.draw.line(screen, WHITE, (275 + x * 167, 100), (275 + x * 167, 600), LINE_WIDTH)
 
-# Function to draw marks
 def draw_marks(): 
     for row in range(GRID_SIZE):
         for col in range(GRID_SIZE):
             x_pos = 275 + col * 167
-            y_pos = 100 + row * 167
-            
+            y_pos = 100 + row * 167            
             if game.grid[row][col] == "X":
                 start_pos1 = (x_pos + 30, y_pos + 30)
                 end_pos1 = (x_pos + 137, y_pos + 137)
@@ -77,22 +71,19 @@ def draw_marks():
                 radius = 55
                 pygame.draw.circle(screen, O_COLOR, center, radius, MARKER_WIDTH)
 
-# Function to display current turn
 def display_turn():
     turn_text = f"Player {game.current_player}'s Turn"
     turn_color = NAVY_BLUE if game.current_player == "X" else O_COLOR
     text_surface = myfont.render(turn_text, True, turn_color)
     screen.blit(text_surface, (SCREEN_WIDTH // 2 - text_surface.get_width() // 2, 20))
-# Function to display winner or draw
+
 def display_winner(): 
     global sound_played
-    pygame.mixer.music.stop()
-    
-    # Check and play sound only if it hasn't been played
+    pygame.mixer.music.stop()    
     if game.winner == "X":
         screen.blit(x_winner_image, (0, 0))
         if not sound_played:
-            win_sound.play()  # Play win sound
+            win_sound.play()
             sound_played = True
     elif game.winner == "O":
         screen.blit(o_winner_image, (0, 0))
@@ -102,15 +93,15 @@ def display_winner():
     else:
         screen.blit(draw_image, (0, 0))
         if not sound_played:
-            draw_sound.play()  # Play draw sound
+            draw_sound.play()
             sound_played = True
-# Function to handle clicks
+
 def handle_click(pos): 
     x, y = pos
     row = (y - 100) // 167
     col = (x - 275) // 167
     if 0 <= row < GRID_SIZE and 0 <= col < GRID_SIZE:
-        click_sound.play()  # Play click sound
+        click_sound.play()
         game.make_move(row, col)
 
 running = True
@@ -123,16 +114,12 @@ while running:
             handle_click(pygame.mouse.get_pos())
         elif event.type == pygame.KEYDOWN and game.game_over:
             game.reset_game()
-            # pygame.mixer.music.play(-1)
-    # Draw the background
+            
     screen.blit(background_image, (0, 0))
-    # Draw grid and marks
     draw_grid()
     draw_marks()
-    # Display current player's turn
     if not game.game_over:
         display_turn()
-    # Check and display winner or draw
     if game.game_over:
         display_winner()
     pygame.display.flip()
