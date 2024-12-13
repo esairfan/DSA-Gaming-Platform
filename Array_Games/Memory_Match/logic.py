@@ -4,7 +4,8 @@ import pygame
 # Define card dimensions
 CARD_WIDTH = 45
 CARD_HEIGHT = 80
-MARGIN = 50
+MARGIN_Y = 20
+MARGIN_X = 50
 GRID_SIZE = 6  # 6x6 grid
 
 # Define colors
@@ -38,7 +39,7 @@ class Card:
                 pygame.draw.rect(screen, (255, 215, 0), (self.x, self.y, CARD_WIDTH, CARD_HEIGHT), 5)  # Gold border
             screen.blit(self.image, (self.x, self.y))  # Display symbol image
         
-        pygame.draw.rect(screen, (0, 0, 0), (self.x-2, self.y-2, CARD_WIDTH+6, CARD_HEIGHT+6), 6, border_radius=10)  # Border for all cards
+        pygame.draw.rect(screen, (255, 255, 255), (self.x-2, self.y-2, CARD_WIDTH+6, CARD_HEIGHT+6), 6, border_radius=10)  # Border for all cards
 
     def is_clicked(self, mouse_x, mouse_y):
         return self.x <= mouse_x <= self.x + CARD_WIDTH and self.y <= mouse_y <= self.y + CARD_HEIGHT
@@ -59,8 +60,8 @@ def create_grid():
     cards = []
     for i in range(GRID_SIZE):
         for j in range(GRID_SIZE):
-            x = j * (CARD_WIDTH + MARGIN)
-            y = i * (CARD_HEIGHT + MARGIN)
+            x = j * (CARD_WIDTH + MARGIN_X)
+            y = i * (CARD_HEIGHT + MARGIN_Y)
             card = Card(symbols.pop(), x, y)
             cards.append(card)
     return cards
