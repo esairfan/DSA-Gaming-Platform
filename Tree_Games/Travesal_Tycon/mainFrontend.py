@@ -64,7 +64,19 @@ def draw_tree(tree_layout, tree_root, traversal_type):
         node_text = FONT.render(str(node_value), True, BG)
         text_rect = node_text.get_rect(center=(x, y))
         screen.blit(node_text, text_rect)
-
+        
+        traversals = get_traversals(tree_root)
+        display_traversals(traversals, traversal_type)
+        
+def display_traversals(traversals, traversal_type):
+    """Display the selected traversal result on the screen."""
+    y_offset = 600
+    x_spacing = 20
+    # Show the traversal order with the correct selections so far
+    traversal_text = f"{traversal_type}: {', '.join(map(str, selected_nodes))}"
+    rendered_text = FONT.render(traversal_text, True, BLACK)
+    screen.blit(rendered_text, (x_spacing, y_offset))
+    
 def find_node_by_value(node, value):
     """Helper function to find a node by its value in the tree."""
     if node is None:
