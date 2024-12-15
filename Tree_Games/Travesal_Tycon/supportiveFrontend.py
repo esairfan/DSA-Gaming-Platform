@@ -2,9 +2,9 @@ import pygame
 import sys
 import time
 from subprocess import call
- 
+
 pygame.init()
- 
+
 SCREEN_WIDTH, SCREEN_HEIGHT = 1200, 700
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Traversal Tree")
@@ -13,7 +13,6 @@ pygame.mixer.init()
 
 # Load sound effect for card flip
 button_click = pygame.mixer.Sound("Tree_Games/Travesal_Tycon/Assets/button_click.mp3")
-
 
 WHITE = (250, 240, 230)  
 BLACK = (0, 0, 0)
@@ -30,7 +29,7 @@ FONT1.set_bold(True)
 BUTTON_WIDTH, BUTTON_HEIGHT = 200, 70
 BUTTON_SPACING = 40
 
-button_texts = ["Post Order", "Pre Order", "In Order"]
+button_texts = ["Post Order", "Pre Order", "In Order", "Back"]
 button_positions = []
 start_x = (SCREEN_WIDTH - (BUTTON_WIDTH * len(button_texts) + BUTTON_SPACING * (len(button_texts) - 1))) // 2
 start_y = ((SCREEN_HEIGHT - BUTTON_HEIGHT) + 40) // 2
@@ -47,7 +46,6 @@ def draw_buttons(screen, positions, texts, hovered_idx=None):
         color = HOVER_COLOR if idx == hovered_idx else SE
         pygame.draw.rect(screen, color, (x, y, BUTTON_WIDTH, BUTTON_HEIGHT), border_radius=10)
         pygame.draw.rect(screen, WHITE, (x, y, BUTTON_WIDTH, BUTTON_HEIGHT), 2, border_radius=10)
-
         text_surface = FONT.render(texts[idx], True, WHITE)
         text_rect = text_surface.get_rect(center=(x + BUTTON_WIDTH // 2, y + BUTTON_HEIGHT // 2))
         screen.blit(text_surface, text_rect)
@@ -79,14 +77,17 @@ def main():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if hovered_button is not None:
                     button_click.play()
-                    traversal_type = button_texts[hovered_button]
-                    print(f"{traversal_type} selected!")
-                    display_loading_screen()
+                    if hovered_button == len(button_texts) - 1:  # Back button clicked
+                        running = False  # Exit the game
+                    else:
+                        traversal_type = button_texts[hovered_button]
+                        print(f"{traversal_type} selected!")
+                        display_loading_screen()
 
-                    # Call the logic for the selected traversal and pass it to the main frontend
-                    call(["python", "Tree_Games/Travesal_Tycon/mainFrontend.py", traversal_type])
-
-                    running = False
+                        running = False
+                        # Call the logic for the selected traversal and pass it to the main frontend
+                        call(["python", "Tree_Games/Travesal_Tycon/mainFrontend.py", traversal_type])
+                        break
 
         # Check hover
         mouse_x, mouse_y = pygame.mouse.get_pos()

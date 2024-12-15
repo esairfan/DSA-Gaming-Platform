@@ -11,7 +11,7 @@ CELL_SIZE = 200
 LINE_WIDTH = 10
 MARKER_WIDTH = 15
 FONT_SIZE = 100
-
+sound_played = False
 # Colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -48,6 +48,13 @@ win_sound = pygame.mixer.Sound("Array_Games/Tic_Tac_Toe/Assets/Win.mp3")
 draw_sound = pygame.mixer.Sound("Array_Games/Tic_Tac_Toe/Assets/Draw.mp3")
 
 game = TicTacToe(grid_size=GRID_SIZE)
+BUTTON_WIDTH, BUTTON_HEIGHT = 200, 50
+BUTTON_COLOR = (39, 50, 64)  # Green color for the buttons
+BUTTON_HOVER_COLOR = (69, 80, 94)  # Darker green for button hover
+def draw_text(text, font, color, x, y):
+    text_surface = font.render(text, True, color)
+    text_rect = text_surface.get_rect(center=(x, y))
+    screen.blit(text_surface, text_rect)
 
 def draw_grid(): 
     for x in range(1, GRID_SIZE):
@@ -104,24 +111,86 @@ def handle_click(pos):
         click_sound.play()
         game.make_move(row, col)
 
-running = True
-while running:
-    sound_played = False
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        elif event.type == pygame.MOUSEBUTTONDOWN and not game.game_over:
-            handle_click(pygame.mouse.get_pos())
-        elif event.type == pygame.KEYDOWN and game.game_over:
-            game.reset_game()
-            
-    screen.blit(background_image, (0, 0))
-    draw_grid()
-    draw_marks()
-    if not game.game_over:
-        display_turn()
-    if game.game_over:
-        display_winner()
-    pygame.display.flip()
-pygame.quit()
-sys.exit()
+def restart_game():
+    # Initialize Pygame
+    pygame.init()
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    pygame.display.set_caption("Game Over")
+    font = pygame.font.SysFont("Array_Games/Memory_Match/Assets/Roboto-Italic.ttf", 36)
+
+    # Load background image
+    background_image = pygame.image.load('Linked_List_games/Snake_Evolution/Assets/restart.png')
+    background_image = pygame.transform.scale(background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
+    
+    # Button positions
+    restart_button_rect = pygame.Rect((SCREEN_WIDTH - BUTTON_WIDTH) // 2, SCREEN_HEIGHT // 2 - 60, BUTTON_WIDTH, BUTTON_HEIGHT)
+    back_button_rect = pygame.Rect((SCREEN_WIDTH - BUTTON_WIDTH) // 2, SCREEN_HEIGHT // 2 + 20, BUTTON_WIDTH, BUTTON_HEIGHT)
+    global score, sn
+    # Game loop for restart page
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if restart_button_rect.collidepoint(event.pos):
+                    # Restart the game logic (replace with actual restart function)
+                    print("Restarting the game...")                  
+                    game_loop()
+
+                elif back_button_rect.collidepoint(event.pos):
+                    # Exit the game
+                    print("Exiting the game...")
+                    running=False
+
+        # Draw the background image
+        screen.blit(background_image, (0, 0))
+
+        # Highlight buttons on hover
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        if restart_button_rect.collidepoint(mouse_x, mouse_y):
+            pygame.draw.rect(screen, BUTTON_HOVER_COLOR, restart_button_rect)
+        else:
+            pygame.draw.rect(screen, BUTTON_COLOR, restart_button_rect)
+
+        if back_button_rect.collidepoint(mouse_x, mouse_y):
+            pygame.draw.rect(screen, BUTTON_HOVER_COLOR, back_button_rect)
+        else:
+            pygame.draw.rect(screen, BUTTON_COLOR, back_button_rect)
+
+        # Draw text on buttons
+        draw_text("Start", font, (255, 255, 255), restart_button_rect.centerx, restart_button_rect.centery)
+        draw_text("Back", font, (255, 255, 255), back_button_rect.centerx, back_button_rect.centery)
+
+        pygame.display.flip()
+
+def game_loop():
+
+    game.reset_game()
+    running = True
+    global sound_played
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN and not game.game_over:
+                handle_click(pygame.mouse.get_pos())
+            elif event.type == pygame.KEYDOWN and game.game_over:
+                running=False
+
+        screen.blit(background_image, (0, 0))
+        draw_grid()
+        draw_marks()
+        if not game.game_over:
+            display_turn()
+        if game.game_over:
+            display_winner()
+
+        pygame.display.flip()
+
+
+
+if __name__ == "__main__":
+    restart_game()
+    pygame.quit()
+    sys.exit()

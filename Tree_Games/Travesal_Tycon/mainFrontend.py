@@ -1,7 +1,8 @@
 import sys
 import pygame
+import subprocess  # Import subprocess to run external scripts
 from logic import generate_random_tree, get_tree_layout, get_traversals
-
+from subprocess import Popen
 # Pygame initialization
 pygame.init()
 # Set up the timer once for 300ms delay
@@ -11,7 +12,6 @@ pygame.time.set_timer(pygame.USEREVENT + 1, 300)
 SCREEN_WIDTH, SCREEN_HEIGHT = 1400, 700
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Random Tree Traversal Visualization")
-
 
 pygame.mixer.init()
 
@@ -23,7 +23,7 @@ incorrect_click = pygame.mixer.Sound("Tree_Games/Travesal_Tycon/Assets/incorrect
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 BLUE = (70, 130, 180)
-RED = (255, 69, 0)
+RED = (139, 0, 0)
 GREEN = (0, 255, 0)
 BG = (250, 236, 204)
 
@@ -35,6 +35,24 @@ TITLE_FONT = pygame.font.Font("Tree_Games/Travesal_Tycon/Assets/static1/static/S
 selected_nodes = []
 current_incorrect_nodes = []
 sound_played = False  # Tracks if the incorrect sound was already played
+
+# Button dimensions
+BUTTON_WIDTH, BUTTON_HEIGHT = 150, 50
+BUTTON_COLOR = (39, 50, 64)
+BUTTON_HOVER_COLOR = (69, 80, 94)
+
+def draw_text(text, font, color, x, y):
+    """Draw text on the screen."""
+    text_surface = font.render(text, True, color)
+    text_rect = text_surface.get_rect(center=(x, y))
+    screen.blit(text_surface, text_rect)
+
+def draw_back_button():
+    """Draw the back button."""
+    back_button_rect = pygame.Rect((SCREEN_WIDTH - BUTTON_WIDTH) // 2, SCREEN_HEIGHT - 100, BUTTON_WIDTH, BUTTON_HEIGHT)
+    pygame.draw.rect(screen, BUTTON_COLOR, back_button_rect)
+    draw_text("Back", TITLE_FONT, WHITE, back_button_rect.centerx, back_button_rect.centery)
+    return back_button_rect
 
 def draw_tree(tree_layout, tree_root, traversal_type):
     """Draw the tree structure on the screen."""
@@ -105,6 +123,15 @@ def handle_mouse_click(mouse_pos, tree_layout, traversal_order):
                 sound_played = False  # Reset so the sound plays once per incorrect click
                 pygame.time.set_timer(pygame.USEREVENT + 1, 1000)
 
+def handle_back_button_click(back_button_rect):
+    """Handle the back button click."""
+    mouse_x, mouse_y = pygame.mouse.get_pos()
+    if back_button_rect.collidepoint(mouse_x, mouse_y):
+        print("back button is clicked")
+        return True
+    return False
+        # Run the supportivefrontend.py script
+
 def main():
     """Main function to visualize the tree and its traversals."""
     global selected_nodes, current_incorrect_nodes, sound_played
@@ -127,6 +154,9 @@ def main():
         screen.fill(BG)
         draw_tree(tree_layout, tree_root, traversal_type)
 
+        # Draw back button
+        back_button_rect = draw_back_button()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -134,13 +164,17 @@ def main():
                 mouse_pos = pygame.mouse.get_pos()
                 handle_mouse_click(mouse_pos, tree_layout, traversal_order)
                 button_click.play()
+                # Check if the back button is clicked
+                if handle_back_button_click(back_button_rect):
+                    running=False
+                    continue
             elif event.type == pygame.USEREVENT + 1:  # Reset red border after 1 second
                 current_incorrect_nodes = []
                 sound_played = False  # Reset sound flag
 
         pygame.display.flip()
         clock.tick(30)
-
+    Popen(['python', 'Tree_Games/Travesal_Tycon/supportiveFrontend.py'])
     pygame.quit()
     sys.exit()
 

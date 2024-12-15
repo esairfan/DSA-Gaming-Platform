@@ -7,6 +7,52 @@ from clock import Clock
 
 pygame.init()
 pygame.font.init()
+class Button:
+    def __init__(self, x, y, width, height, text, bg_color, text_color, 
+                 border_radius=0, border_color=None, border_width=0, font_path=None, font_size=36):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.text = text
+        self.bg_color = bg_color
+        self.text_color = text_color
+        self.border_radius = border_radius
+        self.border_color = border_color
+        self.border_width = border_width
+        # Load custom font or use default
+        self.font = pygame.font.Font(font_path, font_size) if font_path else pygame.font.Font(None, font_size)
+        self.rect = pygame.Rect(x, y, width, height)
+        
+    def draw(self, screen):
+        # Draw the border if needed
+        if self.border_width > 0 and self.border_color:
+            pygame.draw.rect(
+                screen, 
+                self.border_color, 
+                self.rect, 
+                border_radius=self.border_radius, 
+                width=self.border_width
+            )
+        # Draw the button background
+        pygame.draw.rect(
+            screen, 
+            self.bg_color, 
+            self.rect, 
+            border_radius=self.border_radius
+        )
+        # Render the text
+        text_surface = self.font.render(self.text, True, self.text_color)
+        text_rect = text_surface.get_rect(center=self.rect.center)
+        screen.blit(text_surface, text_rect)
+
+    def is_hovered(self, pos):
+        return self.rect.collidepoint(pos)
+
+    def is_clicked(self, pos):
+        return self.is_hovered(pos)
+
+
 
 class Main():
     def __init__(self, screen):
@@ -42,8 +88,9 @@ class Main():
         else:
             clock.update_timer()
         self.screen.blit(clock.display_timer(), (1225,200))
+        
         pygame.display.flip()    # draws all configs; maze, player, instructions, and time
-    def _draw(self, maze, tile, player, game, clock):
+    def _draw(self, maze, tile, player, game, clock, back_button):
         # draw maze
         [cell.draw(self.screen, tile) for cell in maze.grid_cells]
         # add a goal point to reach
@@ -59,9 +106,12 @@ class Main():
         else:
             clock.update_timer()
         self.screen.blit(clock.display_timer(), (1225,200))
+        back_button.draw(screen)
         pygame.display.flip()
         
     def main(self, frame_size, tile):
+        BUTTONTEXTCOLOR=(255, 255, 255)
+        back_button = Button(1225, 600, 100, 60, 'Back', (0, 0, 0, 0), BUTTONTEXTCOLOR,6)
         cols, rows = frame_size[0] // tile, frame_size[-1] // tile
         maze = Maze(cols, rows)
         game = Game(maze.grid_cells[-1], tile)
@@ -76,6 +126,13 @@ class Main():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        mouse_pos = pygame.mouse.get_pos()
+                        if back_button.is_clicked(mouse_pos):
+                            print("Start Game button clicked")
+                            self.running=False
+
             # if keys were pressed still
             if event.type == pygame.KEYDOWN:
                 if not self.game_over:
@@ -106,7 +163,8 @@ class Main():
                 player.right_pressed = False
                 player.up_pressed = False
                 player.down_pressed = False
-            self._draw(maze, tile, player, game, clock)
+            self._draw(maze, tile, player, game, clock, back_button)
+            
             self.FPS.tick(60)
             
 # main.py

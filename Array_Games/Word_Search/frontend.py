@@ -25,12 +25,13 @@ class WordSearchUI:
         ]
         self.current_color_index = 0
         
-    def draw_title(self):
+    def draw_title(self, back_button):
         # Draw the title at the top of the screen
         screen_width, _ = self.screen.get_size()
         title_surface = self.title_font.render("Search & Conquer", True, (255, 255, 255))
         title_rect = title_surface.get_rect(center=(screen_width // 2, 50))  # Adjusted to 50px from the top
         self.screen.blit(title_surface, title_rect)
+        back_button.draw(self.screen)
         
     def get_cell_at_position(self, pos):
         # Identify the grid position from mouse coordinates
@@ -47,7 +48,7 @@ class WordSearchUI:
             return row, col
         return None
 
-    def draw_grid(self):
+    def draw_grid(self, back_button):
         # Calculate grid's top-left position to center it
         grid_width = len(self.grid[0]) * (self.cell_size + self.letter_gap) - self.letter_gap
         grid_height = len(self.grid) * (self.cell_size + self.letter_gap) - self.letter_gap
@@ -82,6 +83,7 @@ class WordSearchUI:
                 text_surface = self.font.render(letter, True, (0, 0, 0))
                 text_rect = text_surface.get_rect(center=(x + self.cell_size // 2, y + self.cell_size // 2))
                 self.screen.blit(text_surface, text_rect)
+                back_button.draw(self.screen)
 
         # Return the bottom position of the grid for word list placement
         return grid_y + grid_height
@@ -97,7 +99,7 @@ class WordSearchUI:
  
         pygame.display.flip()
         
-    def draw_word_list(self, grid_bottom):
+    def draw_word_list(self, grid_bottom, back_button):
         # Draw the word list in a vertical layout below the grid
         screen_width, _ = self.screen.get_size()
         word_list_height = len(self.word_list) * 40  # Adjust the spacing between words
@@ -124,5 +126,6 @@ class WordSearchUI:
             text_surface = self.word_font.render(word, True, color)
             text_rect = text_surface.get_rect(center=(list_x + 100, word_y + 20))  # Centered horizontally in the box
             self.screen.blit(text_surface, text_rect)
+            back_button.draw(self.screen)
 
         pygame.display.flip()

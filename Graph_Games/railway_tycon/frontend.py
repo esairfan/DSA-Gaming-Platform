@@ -10,12 +10,19 @@ pygame.init()
 width, height = 1200, 800
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption('Kruskal\'s Algorithm Visualization')
+pygame.mixer.init()
+
+# Load the background music
+button = pygame.mixer.Sound("Graph_Games/one_way_out/Assets/button_click.mp3")
 
 # Define colors
-WHITE = (255, 255, 255)
-BLUE = (0, 0, 255)
-GREEN = (0, 255, 0)
 BLACK = (0, 0, 0)
+WHITE = (250, 236, 204)
+RED = (139, 0, 0)
+GREEN = (0, 139, 0)
+BLUE = (0, 0, 255)
+BUTTON_COLOR = (39, 50, 64)
+BUTTON_HOVER_COLOR = (69, 80, 94)
 
 # Node radius and click tolerance
 node_radius = 20
@@ -24,8 +31,8 @@ click_tolerance = 30
 # Manually set node positions (based on your image)
 nodes = [
     (270, 550),  # Node 0
-    (600, 50),  # Node 1
-    (1000, 150),  # Node 2
+    (600, 50),   # Node 1
+    (1000, 150), # Node 2
     (150, 300),  # Node 3
     (400, 600),  # Node 4   
     (350, 150),  # Node 5
@@ -34,21 +41,17 @@ nodes = [
 
 # Function to calculate the surface point on the node
 def get_surface_point(x, y, node_x, node_y):
-    # Calculate the angle from the node center to the point (x, y)
     angle = math.atan2(y - node_y, x - node_x)
-    # Calculate the point on the circumference of the node
     surface_x = node_x + node_radius * math.cos(angle)
     surface_y = node_y + node_radius * math.sin(angle)
     return surface_x, surface_y
 
 # Draw the graph function
 def draw_graph():
-    # Clear screen
     screen.fill(WHITE)
 
     # Draw nodes
     for i, (x, y) in enumerate(nodes):
-        # If the node is clicked, change the color to green
         color = GREEN if node_clicked[i] else BLUE
         pygame.draw.circle(screen, color, (int(x), int(y)), node_radius)
 
@@ -56,22 +59,18 @@ def draw_graph():
     for (u, v) in edges:
         x1, y1 = nodes[u]
         x2, y2 = nodes[v]
-
-        # Get the surface points for the edges
-        x1_surface, y1_surface = get_surface_point(x1-50, y1, x1, y1)
-        x2_surface, y2_surface = get_surface_point(x2-50, y2, x2, y2)
-        
-        # Draw the edge from the surface of the nodes
+        x1_surface, y1_surface = get_surface_point(x1 - 50, y1, x1, y1)
+        x2_surface, y2_surface = get_surface_point(x2 - 50, y2, x2, y2)
         pygame.draw.line(screen, BLACK, (int(x1_surface), int(y1_surface)), (int(x2_surface), int(y2_surface)), 2)
 
-        # Calculate the weight and place it offset from the middle of the edge
         weight = round(get_edge_weight(u, v), 2)
         mid_x, mid_y = (x1_surface + x2_surface) / 2, (y1_surface + y2_surface) / 2
-        
-        # Offsetting the text slightly to the right and down from the midpoint
         font = pygame.font.Font(None, 36)
         weight_text = font.render(str(weight), True, BLACK)
-        screen.blit(weight_text, (mid_x + 10, mid_y + 10))  # Slight offset for the weight
+        screen.blit(weight_text, (mid_x + 10, mid_y + 10))
+
+    # Draw the return button
+    draw_return_button()
 
     pygame.display.update()
 
@@ -84,15 +83,29 @@ def check_node_click(x, y):
 
 # Store the clicked node states
 node_clicked = [False] * len(nodes)
-
-# Store the last clicked node
 last_clicked_node = -1
-time_of_last_click = 0  # Time of last click to manage the 1-second delay
-current_click_time = 0  # Time of the current click to check for the delay
+
+# Draw the return button
+def draw_return_button():
+    global return_button_rect
+    button_width, button_height = 200, 50
+    button_x, button_y = width - 220, height - 80
+    return_button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+
+    mouse_x, mouse_y = pygame.mouse.get_pos()
+    if return_button_rect.collidepoint(mouse_x, mouse_y):
+        pygame.draw.rect(screen, BUTTON_HOVER_COLOR, return_button_rect)
+    else:
+        pygame.draw.rect(screen, BUTTON_COLOR, return_button_rect)
+
+    font = pygame.font.Font(None, 36)
+    text_surface = font.render("Return", True, WHITE)
+    text_rect = text_surface.get_rect(center=return_button_rect.center)
+    screen.blit(text_surface, text_rect)
 
 # Main game loop
 def main():
-    global last_clicked_node, time_of_last_click, current_click_time
+    global last_clicked_node
     
     running = True
     while running:
@@ -100,43 +113,21 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
 
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
-                clicked_node = check_node_click(mouse_x, mouse_y)
+
+                if return_button_rect.collidepoint(mouse_x, mouse_y):
+                    button.play()
+                    print("Exiting the game...")
+                    running = False  # Exit the game
                 
+                clicked_node = check_node_click(mouse_x, mouse_y)
                 if clicked_node != -1:
-                    if last_clicked_node == -1:
-                        # First click - turn the node green
-                        node_clicked[clicked_node] = True
-                        last_clicked_node = clicked_node
-                        time_of_last_click = pygame.time.get_ticks()
-                        print(f"Node {clicked_node} clicked")
+                    node_clicked[clicked_node] = True
+                    last_clicked_node = clicked_node
+                    print(f"Node {clicked_node} clicked")
 
-                    else:
-                        # Second or more clicks
-                        edge_exists = False
-                        for (u, v) in edges:
-                            if (u == clicked_node and v == last_clicked_node) or (v == clicked_node and u == last_clicked_node):
-                                edge_exists = True
-                                break
-                        
-                        if edge_exists:
-                            # Turn the current node green and edge green
-                            node_clicked[clicked_node] = True
-                            last_clicked_node = clicked_node
-                            time_of_last_click = pygame.time.get_ticks()
-                            print(f"Node {clicked_node} and edge become green")
-                        else:
-                            # If no edge exists, reset the node color after 1 second
-                            current_click_time = pygame.time.get_ticks()
-                            if current_click_time - time_of_last_click > 1000:
-                                node_clicked[clicked_node] = False
-                                print(f"Node {clicked_node} turned back to blue")
-
-        # Draw the graph with updated node states
         draw_graph()
-
-        pygame.display.update()
 
     pygame.quit()
     sys.exit()

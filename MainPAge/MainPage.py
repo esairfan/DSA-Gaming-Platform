@@ -111,8 +111,10 @@ def StartGame():
                         image = pygame.transform.scale(image, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
                     elif quiz_button.is_clicked(mouse_pos):
-                        print("Help button clicked")
-                        running = False
+                        print("Quiz button clicked")
+                        Popen(['python', 'Quiz_Menu/quiz.py'])
+                        
+                        
 
         screen.blit(image, (0, 0))
         # start_button.draw(screen)
@@ -188,7 +190,6 @@ def play_games():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:  # Left mouse button
                     mouse_pos = pygame.mouse.get_pos()
-                    print(f"Mouse clicked at: {mouse_pos}")  # Print the mouse coordinates
                     if back_button.is_clicked(mouse_pos):
                         print("Back button clicked")
                         running = False
@@ -197,7 +198,7 @@ def play_games():
                         Popen(['python', 'Linked_List_games/Snake_Evolution/Frontend.py'])
                     elif towerofhanoi_game_button.is_clicked(mouse_pos):
                         print("Tower of Hanoi Game button clicked")
-                        Popen(['python', 'Stack_Games/TowerOfHanoi/Supportivefrontend.py'])
+                        Popen(['python', 'Stack_Games/TowerOfHanoi/Mainfrontend.py'])
                     elif fillupthebottle_game_button.is_clicked(mouse_pos):
                         print("Fill Up The Bottle Game button clicked")
                         Popen(['python', 'Stack_Games/FillUpTheBottle/frontend.py'])
@@ -209,22 +210,22 @@ def play_games():
                         Popen(['python', 'Array_Games/Memory_Match/Frontend.py'])
                     elif mazesolve_game_button.is_clicked(mouse_pos):
                         print("Maze Solve Game button clicked")
-                        Popen(['python', 'Linked_List_games/Snake_Evolution/Frontend.py'])
+                        Popen(['python', 'Graph_Games/Maze_Game/main.py'])
                     elif balanacetree_game_button.is_clicked(mouse_pos):
                         print("Balance Tree Game button clicked")
-                        Popen(['python', 'Linked_List_games/Snake_Evolution/Frontend.py'])
+                        Popen(['python', 'Tree_Games/Balanced_Tree/frontend.py'])
                     elif wordsearch_game_button.is_clicked(mouse_pos):
                         print("Word Search Game button clicked")
                         Popen(['python', 'Array_Games/Word_Search/main.py'])
                     elif traversaltycon_game_button.is_clicked(mouse_pos):
                         print("Traversal Tycon Game button clicked")
-                        Popen(['python', 'Linked_List_games/Snake_Evolution/Frontend.py'])
+                        Popen(['python', 'Tree_Games/Travesal_Tycon/supportiveFrontend.py'])
                     elif railwaytycon_game_button.is_clicked(mouse_pos):
                         print("Railway Tycon Game button clicked")
-                        Popen(['python', 'Linked_List_games/Snake_Evolution/Frontend.py'])
+                        Popen(['python', 'Graph_Games/railway_tycon/frontend.py'])
                     elif eulerpath_game_button.is_clicked(mouse_pos):
                         print("Euler Path Game button clicked")
-                        Popen(['python', 'Linked_List_games/Snake_Evolution/Frontend.py'])
+                        Popen(['python', 'Graph_Games/one_way_out/frontend.py'])
                         
         
         # Draw the background image

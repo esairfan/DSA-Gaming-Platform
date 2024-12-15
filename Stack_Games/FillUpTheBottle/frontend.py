@@ -15,7 +15,7 @@ COLORS = [
 
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-
+back_button_rect = pygame.Rect(900, 600, 200, 50)
 
 # Load images
 background_image = pygame.image.load("Stack_Games/FillUpTheBottle/Assets/bg2.jpg")
@@ -32,6 +32,13 @@ ball_move_sound = pygame.mixer.Sound("Stack_Games/FillUpTheBottle/Assets/Invalid
 
 pygame.display.set_caption("Hydro Hustle")
 clock = pygame.time.Clock()
+BUTTON_WIDTH, BUTTON_HEIGHT = 200, 50
+BUTTON_COLOR = (39, 50, 64)  # Green color for the buttons
+BUTTON_HOVER_COLOR = (69, 80, 94)  # Darker green for button hover
+def draw_text(text, font, color, x, y):
+    text_surface = font.render(text, True, color)
+    text_rect = text_surface.get_rect(center=(x, y))
+    screen.blit(text_surface, text_rect)
 
 
 class FillUpTheBottleFrontend:
@@ -111,17 +118,33 @@ def main():
     game = FillUpTheBottle(5)
     frontend = FillUpTheBottleFrontend(game)
     running = True
+
+    # Define the "Return" button properties
+    return_button_rect = pygame.Rect(50, 600, 200, 50)
+    font = pygame.font.SysFont("Array_Games/Memory_Match/Assets/Roboto-Italic.ttf", 36)
+    
     while running:
+        screen.blit(background_image, (0, 0))  # Draw the background image
+
+        # Draw the "Return" button
+        pygame.draw.rect(screen, (75, 0, 130), return_button_rect)  # Red button
+        draw_text("Return", font, (255, 255, 255), return_button_rect.centerx, return_button_rect.centery)
+
         if not game.is_game_complete():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
-                if event.type == pygame.MOUSEBUTTONDOWN:
+                elif event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_x, mouse_y = pygame.mouse.get_pos()
+
+                    # Check if the "Return" button was clicked
+                    if return_button_rect.collidepoint(mouse_x, mouse_y):
+                        running = False  # Exit the game
+
+                    # Handle bottle clicks
                     x_offset = (SCREEN_WIDTH - (len(game.get_bottles()) * (BOTTLE_WIDTH + 50) - 50)) // 2
                     for i, bottle in enumerate(game.get_bottles()): 
                         bottle_rect = pygame.Rect(x_offset + i * (BOTTLE_WIDTH + 50), SCREEN_HEIGHT - BOTTLE_HEIGHT - 50, BOTTLE_WIDTH, BOTTLE_HEIGHT)
-
                         if bottle_rect.collidepoint(mouse_x, mouse_y):
                             bottle_click_sound.play()
                             if frontend.selected_bottle is None:
@@ -138,24 +161,80 @@ def main():
                                     frontend.reset_selected_bottle()
                                     invalid_move_sound.play()
                                 break
-                            
+
             frontend.animate_ball_upward()
-    
             frontend.draw_bottles(screen, frontend.selected_bottle)
-    
-            screen.blit(background_image, (0, 0))
-    
+
         if game.is_game_complete():
             screen.blit(win_image, (0, 0))
-            pygame.display.flip()
+            pygame.draw.rect(screen, (200, 150, 255), back_button_rect)  # Draw the button
+            draw_text("Back", font, (255, 255, 255), back_button_rect.centerx, back_button_rect.centery)
+
+            # Handle win-screen events
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if back_button_rect.collidepoint(event.pos):  # Check if the click is within the button
+                        running = False
 
+        pygame.display.flip()
         clock.tick(30)
 
-    pygame.quit()
+
+def restart_game():
+    # Initialize Pygame
+    pygame.init()
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    pygame.display.set_caption("Game Over")
+    font = pygame.font.SysFont("Array_Games/Memory_Match/Assets/Roboto-Italic.ttf", 36)
+
+    # Load background image
+    background_image = pygame.image.load('Linked_List_games/Snake_Evolution/Assets/restart.png')
+    background_image = pygame.transform.scale(background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
+    
+    # Button positions
+    restart_button_rect = pygame.Rect((SCREEN_WIDTH - BUTTON_WIDTH) // 2, SCREEN_HEIGHT // 2 - 60, BUTTON_WIDTH, BUTTON_HEIGHT)
+    back_button_rect = pygame.Rect((SCREEN_WIDTH - BUTTON_WIDTH) // 2, SCREEN_HEIGHT // 2 + 20, BUTTON_WIDTH, BUTTON_HEIGHT)
+    global score, sn
+    # Game loop for restart page
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if restart_button_rect.collidepoint(event.pos):
+                    # Restart the game logic (replace with actual restart function)
+                    print("Restarting the game...")                  
+                    main()
+
+                elif back_button_rect.collidepoint(event.pos):
+                    # Exit the game
+                    print("Exiting the game...")
+                    running=False
+
+        # Draw the background image
+        screen.blit(background_image, (0, 0))
+
+        # Highlight buttons on hover
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        if restart_button_rect.collidepoint(mouse_x, mouse_y):
+            pygame.draw.rect(screen, BUTTON_HOVER_COLOR, restart_button_rect)
+        else:
+            pygame.draw.rect(screen, BUTTON_COLOR, restart_button_rect)
+
+        if back_button_rect.collidepoint(mouse_x, mouse_y):
+            pygame.draw.rect(screen, BUTTON_HOVER_COLOR, back_button_rect)
+        else:
+            pygame.draw.rect(screen, BUTTON_COLOR, back_button_rect)
+
+        # Draw text on buttons
+        draw_text("Start", font, (255, 255, 255), restart_button_rect.centerx, restart_button_rect.centery)
+        draw_text("Back", font, (255, 255, 255), back_button_rect.centerx, back_button_rect.centery)
+
+        pygame.display.flip()
 
 
 if __name__ == "__main__":
-    main()
+    restart_game()
